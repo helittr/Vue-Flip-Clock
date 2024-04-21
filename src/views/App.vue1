@@ -1,0 +1,50 @@
+<script lang="ts" setup>
+import './assets/flipclock.css'
+import "./assets/flipclock.min.js"
+import "./assets/flipclock.cjs"
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  // @ts-ignore
+  var clock = $('.clock')?.FlipClock({ 
+    clockFace: 'TwentyFourHourClock'
+  });
+  console.log(clock)
+  document.getElementById('Clock')?.addEventListener('mouseenter',() => {
+    console.log('mouseenter');
+    // window.ipcRenderer.send('set-ignore-mouse-events', true, { forward: true })
+  })
+
+  document.getElementById('Clock')?.addEventListener('mouseleave',() => {
+    console.log('mouseleave');
+    // window.ipcRenderer.send('set-ignore-mouse-events', false)
+  })
+})
+</script>
+
+<template>
+  <div id="Clock" class="clock"></div>
+</template>
+
+<style>
+.clock {
+  /* user-select: none; */
+  -webkit-app-region: drag;
+  overflow: hidden;
+  display: inline-block;
+  width: auto;
+  margin: 0%;
+}
+
+/* div.inn {
+  background-color: rgb(148, 255, 127) !important;
+  color: black !important;
+  font-size: 40px !important;
+
+}
+
+.flip-clock-dot {
+  background-color: black !important;
+} */
+</style>
