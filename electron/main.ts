@@ -24,12 +24,12 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     // frame: false,
-    // height:104,
-    // width:500,
+    height:46,
+    width:222,
     // resizable:false,
     alwaysOnTop:true,
-    // titleBarStyle: 'hidden',
-    // transparent: true,
+    titleBarStyle: 'hidden',
+    transparent: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     },
@@ -39,6 +39,9 @@ function createWindow() {
     console.log(options)
     const win = BrowserWindow.fromWebContents(event.sender)
     win?.setIgnoreMouseEvents(ignore, options)
+  })
+  ipcMain.on('set-win-hight', (_, width, height) => {
+    win?.setSize(width ,height)
   })
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {

@@ -1,19 +1,15 @@
 <template>
     <div class="flipClock">
         <Flip class="flip" :digit="Math.floor(house / 10 % 10)"></Flip>
-        <Flip class="flip" :digit="house % 10"></Flip>
+        <Flip class="flip" :digit="house % 10" ></Flip>
         <div class="dotGroup">
-            <div class="dot"></div>
-            <div class="dot"></div>
         </div>
-        <Flip class="flip" :digit="Math.floor(min / 10 % 10)"></Flip>
-        <Flip class="flip" :digit="min % 10"></Flip>
+        <Flip class="flip" :digit="Math.floor(min / 10 % 10)" ></Flip>
+        <Flip class="flip" :digit="min % 10" ></Flip>
         <div class="dotGroup">
-            <div class="dot"></div>
-            <div class="dot"></div>
         </div>
-        <Flip class="flip" :digit="Math.floor(sec / 10 % 10)"></Flip>
-        <Flip class="flip" :digit="sec % 10"></Flip>
+        <Flip class="flip" :digit="Math.floor(sec / 10 % 10)" ></Flip>
+        <Flip class="flip" :digit="sec % 10" ></Flip>
     </div>
 </template>
 
@@ -40,34 +36,30 @@ onMounted(()=>{
 
 <style scoped>
 .flipClock {
-    width: 100%;
-    height: 100%;
+    width: 98%;
     display: flex;
-    flex-direction: row;
-    align-content: space-between;
+    justify-content: space-around;
+    padding: 1%;
 }
 
 .flip {
-    width: 150px;
-    height: 200px;
-    margin: 10px;
+    width: 14%;
+    -webkit-app-region: drag;
 }
 
 .dotGroup {
-    height: 200px;
-    margin: 10px;
+    width: 2%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
-.dot:nth-child(1) {
-    background-color: black;
-    margin-top:60px;
-}
-.dot:nth-child(2) {
-    background-color: black;
-    margin-top:60px;
-}
-.dot {
-    height: 20px;
-    width: 20px;
+
+.dotGroup::before,.dotGroup::after {
+    content: '';
+    aspect-ratio: 1;
+    width: 100%;
+    background-color: rgb(227, 81, 118);
+    display: block;
     border-radius: 50%;
 }
 </style>

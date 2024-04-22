@@ -1,7 +1,8 @@
 <template>
     <div ref="view" class="flip">
-        <div class="page back" :class="{ flipback: frontNumber != backNumber }" :data-number="backNumber"></div>
-        <div class="page front" :class="{ flipfront: isFlip }" :data-number="frontNumber"></div>
+        <div @mouseenter="on_enter" @mouseleave="on_leave" class="page back" :class="{ flipback: frontNumber != backNumber }"
+            :data-number="backNumber"></div>
+        <div @mouseenter="on_enter" @mouseleave="on_leave" class="page front" :class="{ flipfront: isFlip }" :data-number="frontNumber"></div>
     </div>
 </template>
 
@@ -40,50 +41,52 @@ function show(num: number) {
 }
 
 watch(() => props.digit, (digit, _) => {
-    if (0<= digit && digit<= 9) {
+    if (0 <= digit && digit <= 9) {
         show(digit)
     }
 })
 // @ts-ignore
 watch(() => view.offsetHeight, (v, _) => {
     console.log(v)
-    if(v) h.value = v + 'px'
+    if (v) h.value = v + 'px'
 })
 // @ts-ignore
 watch(() => view.offsetWidth, (v, _) => {
     console.log(v)
-    if(v) w.value = v + 'px'
+    if (v) w.value = v + 'px'
 })
 
 onMounted(() => {
-    var observe = new ResizeObserver((entries)=>{
-        console.log(entries)
-        for(var e of entries){
-            if( e.target === view.value ){
-                h.value = e.borderBoxSize[0].blockSize + 'px'
+    var observe = new ResizeObserver((entries) => {
+        for (var e of entries) {
+            if (e.target === view.value) {
                 w.value = e.borderBoxSize[0].inlineSize + 'px'
+                h.value = Math.floor(e.borderBoxSize[0].inlineSize * 1.4) + 'px'
             }
         }
     })
-    // console.log("view", view)
+    // @ts-ignore
     observe.observe(view.value)
     // @ts-ignore
-    h.value = view.value.offsetHeight + 'px'
-    // @ts-ignore
     w.value = view.value.offsetWidth + 'px'
-    if( h.value === '0px'){
-        h.value = '100px'
-    }
-    console.log(h.value, w.value)
+    // @ts-ignore
+    h.value = Math.floor(view.value.offsetWidth * 1.5) + 'px'
     show(props.digit)
 })
+
+function on_enter() {
+    console.log('enter');
+}
+
+function on_leave() {
+    console.log('leave');
+}
 </script>
 
 <style scoped>
-/* .flip {
-    height: 100%;
-    width: 100%;
-} */
+.flip {
+    height: v-bind(h);
+}
 
 .front,
 .back {
@@ -92,7 +95,6 @@ onMounted(() => {
     height: v-bind(h);
     font-size: v-bind(w);
     border-radius: 10%;
-    overflow: hidden;
 }
 
 .back::after {
@@ -130,6 +132,7 @@ onMounted(() => {
 
 .page::before,
 .page::after {
+    display: block;
     content: attr(data-number);
     position: absolute;
     overflow: hidden;
@@ -137,19 +140,24 @@ onMounted(() => {
     color: v-bind(color);
     text-align: center;
     width: 100%;
+    box-shadow: -.1ex .1ex .4px rgb(178, 64, 92);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(227, 81, 118);
+    border-radius: 10%;
 }
 
 .page::before {
     top: 0;
-    bottom: 52%;
-    background-color: v-bind(color_up);
+    bottom: 51%;
+    background-color: rgb(227, 81, 118);
     line-height: v-bind(h);
 }
 
 .page::after {
-    top: 52%;
+    top: 51%;
     bottom: 0;
-    background-color: v-bind(color_down);
+    background-color: rgb(227, 81, 118);
     line-height: 0;
 }
 </style>, onMounted, onMounted, hasInjectionContext
