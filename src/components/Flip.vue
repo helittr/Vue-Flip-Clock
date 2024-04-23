@@ -1,24 +1,26 @@
-<template>
-    <div ref="view" class="flip">
-        <div @mouseenter="on_enter" @mouseleave="on_leave" class="page back" :class="{ flipback: frontNumber != backNumber }"
-            :data-number="backNumber"></div>
-        <div @mouseenter="on_enter" @mouseleave="on_leave" class="page front" :class="{ flipfront: isFlip }" :data-number="frontNumber"></div>
-    </div>
-</template>
-
 <script lang="ts" setup>
 import { ref, watch, onMounted } from 'vue'
 
 const props = withDefaults(defineProps<{
     digit: number,
-    color_up?: string,
-    color_down?: string,
-    color?: string
+    bgcolor_up?: string,
+    bgcolor_down?: string,
+    fontcolor_up?: string,
+    fontcolor_down?: string,
+    bordercolor_up?: string,
+    bordercolor_down?: string,
+    shadowcolor_up?: string,
+    shadowcolor_down?: string
 }>(), {
     digit: 0,
-    color_up: "black",
-    color_down: "black",
-    color: "white"
+    bgcolor_up: "rgba(178, 64, 93, .3)",
+    bgcolor_down: "rgba(178, 64, 93, .3)",
+    fontcolor_up: "white",
+    fontcolor_down: "white",
+    bordercolor_up: "white",
+    bordercolor_down: "white",
+    shadowcolor_up: "rgba(178, 64, 93, 0.2)",
+    shadowcolor_down: "rgba(178, 64, 93, 0.2)",
 })
 
 const view = ref(null)
@@ -39,7 +41,7 @@ function show(num: number) {
         isFlip.value = false;
     }, 500);
 }
-
+// window.resizeTo(100, 50)
 watch(() => props.digit, (digit, _) => {
     if (0 <= digit && digit <= 9) {
         show(digit)
@@ -74,22 +76,28 @@ onMounted(() => {
     show(props.digit)
 })
 
-function on_enter() {
-    console.log('enter');
-}
+// function on_enter() {
+//     console.log('enter');
+// }
 
-function on_leave() {
-    console.log('leave');
-}
+// function on_leave() {
+//     console.log('leave');
+// }
 </script>
+
+<template>
+    <div ref="view" class="flip">
+        <div class="page back" :class="{ flipback: frontNumber != backNumber }" :data-number="backNumber"></div>
+        <div class="page front" :class="{ flipfront: frontNumber != backNumber }" :data-number="frontNumber"></div>
+    </div>
+</template>
 
 <style scoped>
 .flip {
     height: v-bind(h);
 }
 
-.front,
-.back {
+.page {
     position: absolute;
     width: v-bind(w);
     height: v-bind(h);
@@ -97,9 +105,58 @@ function on_leave() {
     border-radius: 10%;
 }
 
+.page::before,
+.page::after {
+    width: 100%;
+    content: attr(data-number);
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    backface-visibility: hidden;
+    text-align: center;
+    border-width: .03ex;
+    border-style: dotted;
+    border-radius: 16%;
+}
+
+.page::before {
+    top: 0;
+    bottom: 51%;
+    line-height: v-bind(h);
+}
+
+.page::after {
+    top: 51%;
+    bottom: 0;
+    line-height: 0;
+}
+
+.back::before {
+    box-shadow: -.1ex .1ex .4px v-bind(shadowcolor_up);
+    border-color: v-bind(bordercolor_up);
+    color: rgba(0, 0, 0, 0);
+    background-color: v-bind(bgcolor_up);
+}
+
 .back::after {
     transform: rotateX(180deg);
     z-index: 1;
+    background-color: rgba(0, 0, 0, 0);
+    color: v-bind(fontcolor_up);
+    border-color: v-bind(bordercolor_up);
+}
+
+.front::before {
+    background-color: rgba(0, 0, 0, 0);
+    color: v-bind(fontcolor_up);
+    border-color: v-bind(bordercolor_up);
+}
+
+.front::after {
+    box-shadow: -.1ex .1ex .4px v-bind(shadowcolor_down);
+    border-color: v-bind(bordercolor_down);
+    color: v-bind(fontcolor_down);
+    background-color: v-bind(bgcolor_down);
 }
 
 .flipfront::before {
@@ -110,54 +167,50 @@ function on_leave() {
     transform-origin: center bottom;
 }
 
-.flipback::after {
-    animation-name: after;
-    animation-fill-mode: both;
-    animation-duration: .3s;
-    animation-direction: alternate;
-    transform-origin: center top;
-}
-
 @keyframes before {
     100% {
         transform: rotateX(180deg);
     }
 }
 
-@keyframes after {
+.flipfront::after {
+    animation-name: front;
+    animation-fill-mode: both;
+    animation-duration: .3s;
+    transform-origin: center bottom;
+}
+
+@keyframes front {
     100% {
-        transform: rotateX(0);
+        color: rgba(0, 0, 0, 0);
     }
 }
 
-.page::before,
-.page::after {
-    display: block;
-    content: attr(data-number);
-    position: absolute;
-    overflow: hidden;
-    backface-visibility: hidden;
-    color: v-bind(color);
-    text-align: center;
-    width: 100%;
-    box-shadow: -.1ex .1ex .4px rgb(178, 64, 92);
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(227, 81, 118);
-    border-radius: 10%;
+.flipback::after {
+    animation-name: after;
+    animation-fill-mode: both;
+    animation-duration: .3s;
+    transform-origin: center top;
 }
 
-.page::before {
-    top: 0;
-    bottom: 51%;
-    background-color: rgb(227, 81, 118);
-    line-height: v-bind(h);
+@keyframes after {
+    100% {
+        transform: rotateX(0);
+        color: v-bind(fontcolor_down);
+        border-color: v-bind(bordercolor_down);
+    }
 }
 
-.page::after {
-    top: 51%;
-    bottom: 0;
-    background-color: rgb(227, 81, 118);
-    line-height: 0;
+.flipback::before {
+    animation-name: back;
+    animation-duration: .3s;
+    animation-fill-mode: both;
+    transform-origin: center top;
 }
-</style>, onMounted, onMounted, hasInjectionContext
+
+@keyframes back {
+    100% {
+        color: v-bind(fontcolor_up);
+    }
+}
+</style>

@@ -40,9 +40,6 @@ function createWindow() {
     const win = BrowserWindow.fromWebContents(event.sender)
     win?.setIgnoreMouseEvents(ignore, options)
   })
-  ipcMain.on('set-win-hight', (_, width, height) => {
-    win?.setSize(width ,height)
-  })
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
